@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Line, Doughnut } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -26,7 +26,7 @@ ChartJS.register(
 )
 
 export default function DashboardSection() {
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     totalEarnings: 15420.50,
     activeLinks: 47,
     totalClicks: 89432,
@@ -82,7 +82,7 @@ export default function DashboardSection() {
     <div className="section fade-in">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard Overview</h1>
-        <p className="text-gray-600">Welcome back! Here's your affiliate performance summary.</p>
+        <p className="text-gray-600">Welcome back! Here&apos;s your affiliate performance summary.</p>
       </div>
 
       {/* Stats Cards */}
@@ -98,7 +98,7 @@ export default function DashboardSection() {
             </div>
           </div>
           <div className="mt-2 text-sm text-green-600">
-            <i className="fas fa-arrow-up mr-1"></i> +12.5% from last month
+            <i className="fas fa-arrow-up mr-1"></i> +12.5% from last months
           </div>
         </div>
 
@@ -196,7 +196,10 @@ export default function DashboardSection() {
               </div>
             </div>
           </div>
-          <button className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <button 
+            type="button"
+            className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
             View All Commissions →
           </button>
         </div>
@@ -228,7 +231,10 @@ export default function DashboardSection() {
               </div>
             </div>
           </div>
-          <button className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <button 
+            type="button"
+            className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
             View All Links →
           </button>
         </div>

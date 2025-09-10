@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Navigation from './Navigation'
 import DashboardSection from './sections/DashboardSection'
 import LinksSection from './sections/LinksSection'
@@ -18,7 +18,7 @@ import SMSCampaignModal from './modals/SMSCampaignModal'
 
 export default function Dashboard() {
   const [currentSection, setCurrentSection] = useState('dashboard')
-  const [user, setUser] = useState({
+  const [user] = useState({
     id: 1,
     name: 'John Doe',
     email: 'john@example.com',
@@ -26,7 +26,7 @@ export default function Dashboard() {
     total_earnings: 15420.50,
     status: 'active'
   })
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [showCreateLinkModal, setShowCreateLinkModal] = useState(false)
   const [showAddProductModal, setShowAddProductModal] = useState(false)

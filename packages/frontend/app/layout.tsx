@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -21,10 +22,13 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       </head>
       <body className={inter.className}>
         {children}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/chart.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )

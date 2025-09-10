@@ -6,7 +6,7 @@ interface AIModalProps {
   onSuccess: () => void
 }
 
-export default function AIModal({ isOpen, onClose, onSuccess }: AIModalProps) {
+export default function AIModal({ isOpen, onClose }: AIModalProps) {
   if (!isOpen) return null
 
   return (

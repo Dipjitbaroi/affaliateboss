@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 interface UserProfile {
   id: number
@@ -125,40 +126,6 @@ export default function ProfileSection() {
     } catch (error) {
       console.error('Error updating profile:', error)
       alert('Failed to update profile')
-    }
-  }
-
-  const updatePassword = async (currentPassword: string, newPassword: string) => {
-    if (!currentPassword || !newPassword) {
-      alert('Please fill in all password fields')
-      return
-    }
-
-    if (newPassword.length < 8) {
-      alert('New password must be at least 8 characters long')
-      return
-    }
-
-    try {
-      // Mock API call - replace with actual API
-      alert('Password updated successfully!')
-    } catch (error) {
-      console.error('Error updating password:', error)
-      alert('Failed to update password')
-    }
-  }
-
-  const uploadAvatar = async (file: File) => {
-    try {
-      // Mock file upload - replace with actual upload
-      const mockUrl = `https://via.placeholder.com/150x150?text=${file.name.charAt(0).toUpperCase()}`
-      if (profile) {
-        setProfile({ ...profile, avatar: mockUrl })
-      }
-      alert('Avatar updated successfully!')
-    } catch (error) {
-      console.error('Error uploading avatar:', error)
-      alert('Failed to upload avatar')
     }
   }
 
@@ -297,9 +264,11 @@ export default function ProfileSection() {
             <div className="space-y-6">
               <div className="flex items-center space-x-6">
                 <div className="relative">
-                  <img
+                  <Image
                     src={profile.avatar}
                     alt={profile.name}
+                    width={96}
+                    height={96}
                     className="w-24 h-24 rounded-full object-cover"
                   />
                   {isEditing && (
@@ -387,7 +356,7 @@ export default function ProfileSection() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
                     <select
                       value={profile.payment_method}
-                      onChange={(e) => {/* Handle payment method change */}}
+                      onChange={() => {/* Handle payment method change */}}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       title="Select payment method"
                     >
@@ -470,6 +439,7 @@ export default function ProfileSection() {
                         }))}
                         disabled={!isEditing}
                         className="sr-only peer"
+                        aria-label={`${notification.label} notification setting`}
                       />
                       <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all ${isEditing ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-blue-600 opacity-60'}`}></div>
                     </label>

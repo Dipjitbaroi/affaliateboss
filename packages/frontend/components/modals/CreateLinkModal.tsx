@@ -6,7 +6,7 @@ interface CreateLinkModalProps {
   onSuccess: () => void
 }
 
-export default function CreateLinkModal({ isOpen, onClose, onSuccess }: CreateLinkModalProps) {
+export default function CreateLinkModal({ isOpen, onClose }: CreateLinkModalProps) {
   if (!isOpen) return null
 
   return (
@@ -14,7 +14,13 @@ export default function CreateLinkModal({ isOpen, onClose, onSuccess }: CreateLi
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 slide-in">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Create Affiliate Link</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button 
+            type="button"
+            onClick={onClose} 
+            className="text-gray-500 hover:text-gray-700"
+            aria-label="Close create link modal"
+            title="Close"
+          >
             <i className="fas fa-times text-xl"></i>
           </button>
         </div>

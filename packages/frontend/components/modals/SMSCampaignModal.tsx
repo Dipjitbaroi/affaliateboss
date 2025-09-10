@@ -6,7 +6,7 @@ interface SMSCampaignModalProps {
   onSuccess: () => void
 }
 
-export default function SMSCampaignModal({ isOpen, onClose, onSuccess }: SMSCampaignModalProps) {
+export default function SMSCampaignModal({ isOpen, onClose }: SMSCampaignModalProps) {
   if (!isOpen) return null
 
   return (

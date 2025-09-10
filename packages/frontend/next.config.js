@@ -9,7 +9,7 @@ const nextConfig = {
     ]
   },
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'via.placeholder.com'],
   },
 }
 

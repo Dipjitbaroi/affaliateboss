@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 interface Product {
   id: number
@@ -327,9 +328,11 @@ export default function ProductsSection() {
           {paginatedProducts.map((product) => (
             <div key={product.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
               <div className="aspect-w-3 aspect-h-2">
-                <img
+                <Image
                   src={product.image_url}
                   alt={product.name}
+                  width={300}
+                  height={200}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </div>

@@ -192,7 +192,10 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
                   {tool.isActive ? 'Active' : 'Coming Soon'}
                 </span>
                 {tool.isActive && (
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  <button 
+                    type="button"
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
                     {activeTool === tool.id ? 'Hide' : 'Use Tool'} <i className="fas fa-chevron-down ml-1"></i>
                   </button>
                 )}
@@ -230,6 +233,7 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
                       </select>
                     </div>
                     <button
+                      type="button"
                       onClick={generateQRCode}
                       className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                     >
@@ -275,6 +279,7 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
                       </select>
                     </div>
                     <button
+                      type="button"
                       onClick={generateContent}
                       className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
                     >
@@ -302,7 +307,10 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
-                    <button className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                    <button 
+                      type="button"
+                      className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    >
                       <i className="fas fa-compress mr-2"></i>Shorten Link
                     </button>
                   </div>
@@ -318,6 +326,7 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
+            type="button"
             onClick={() => copyToClipboard('https://affiliateboss.com/join')}
             className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors"
           >
@@ -328,6 +337,7 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
           </button>
 
           <button
+            type="button"
             onClick={() => {/* Export data */}}
             className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors"
           >
@@ -338,6 +348,7 @@ Don't miss out on this amazing opportunity to boost your affiliate income!
           </button>
 
           <button
+            type="button"
             onClick={() => {/* Share tools */}}
             className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-colors"
           >

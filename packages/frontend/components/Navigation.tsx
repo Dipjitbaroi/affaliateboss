@@ -44,6 +44,7 @@ export default function Navigation({ user, currentSection, onSectionChange, onSh
               {navItems.map((item) => (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => onSectionChange(item.id)}
                   className={`nav-link text-white hover:text-blue-200 transition-colors px-2 py-1 rounded ${
                     currentSection === item.id ? 'bg-blue-800' : ''
@@ -63,8 +64,11 @@ export default function Navigation({ user, currentSection, onSectionChange, onSh
               </span>
             </div>
             <button
+              type="button"
               onClick={onShowNotifications}
               className="text-white hover:text-blue-200 relative"
+              aria-label="Show notifications"
+              title="Notifications"
             >
               <i className="fas fa-bell text-lg"></i>
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -72,8 +76,11 @@ export default function Navigation({ user, currentSection, onSectionChange, onSh
               </span>
             </button>
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden text-white hover:text-blue-200"
+              aria-label="Toggle mobile menu"
+              title="Menu"
             >
               <i className="fas fa-bars text-lg"></i>
             </button>
@@ -88,6 +95,7 @@ export default function Navigation({ user, currentSection, onSectionChange, onSh
             {navItems.map((item) => (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => {
                   onSectionChange(item.id)
                   setMobileMenuOpen(false)

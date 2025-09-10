@@ -17,7 +17,7 @@ export default function CommissionsSection() {
   const [commissions, setCommissions] = useState<Commission[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     thisMonth: 2847.50,
     pending: 523.45,
     paid: 9476.55,
@@ -133,7 +133,7 @@ export default function CommissionsSection() {
         <div className="bg-gradient-to-r from-green-400 to-green-600 p-6 rounded-lg text-white">
           <h4 className="text-lg font-semibold mb-2">This Month</h4>
           <p className="text-3xl font-bold">${stats.thisMonth.toFixed(2)}</p>
-          <p className="text-green-100">+23% vs last month</p>
+          <p className="text-green-100">+23% vs last months</p>
         </div>
         <div className="bg-gradient-to-r from-blue-400 to-blue-600 p-6 rounded-lg text-white">
           <h4 className="text-lg font-semibold mb-2">Pending</h4>
@@ -156,7 +156,7 @@ export default function CommissionsSection() {
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h3 className="text-lg font-semibold mb-4">Tier Benefits</h3>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-center">
-          {tierStructure.map((tier, index) => (
+          {tierStructure.map((tier) => (
             <div key={tier.name} className={`p-4 border-2 rounded-lg ${tier.name === stats.currentTier ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200'}`}>
               <div className={`w-12 h-12 ${tier.color} text-white rounded-full flex items-center justify-center mx-auto mb-3`}>
                 <span className="font-bold text-sm">{tier.name[0]}</span>
