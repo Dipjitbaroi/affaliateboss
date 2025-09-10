@@ -1,7 +1,7 @@
 // Prisma Database utility for PostgreSQL
 // Bangladesh dev style - practical, efficient, and production-ready
 
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 
 // Global prisma instance for serverless compatibility
 let prisma;
@@ -12,8 +12,8 @@ function initDatabase() {
   
   try {
     prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-      errorFormat: 'pretty',
+      log: process.env.NODE_ENV === 'development' ? ['error'] : ['error'],
+      errorFormat: 'minimal',
     });
     
     console.log('Prisma client initialized successfully');
@@ -272,7 +272,7 @@ async function isDatabaseReady() {
   }
 }
 
-module.exports = {
+export {
   initDatabase,
   getDatabase,
   closeDatabase,
@@ -286,9 +286,10 @@ module.exports = {
   healthCheck,
   withTransaction,
   batchOperation,
-  isDatabaseReady,
-  // Export Prisma client for direct access when needed
-  get prisma() {
-    return getDatabase();
-  }
+  isDatabaseReady
 };
+
+// Export Prisma client for direct access when needed
+export function getPrisma() {
+  return getDatabase();
+}
