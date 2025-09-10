@@ -4,7 +4,8 @@
 class AffiliateBossApp {
     constructor() {
         this.apiKey = localStorage.getItem('affiliate_api_key') || 'api_key_john_123456789';
-        this.baseUrl = window.location.origin;
+        // Auto-detect API base URL based on environment
+        this.baseUrl = this.getApiBaseUrl();
         this.currentSection = 'dashboard';
         this.charts = {};
         this.user = null;
@@ -13,8 +14,21 @@ class AffiliateBossApp {
         this.init();
     }
 
+    getApiBaseUrl() {
+        // In development, use separate API port
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://localhost:3002';
+        }
+        // In production, use same origin (Vercel/production setup)
+        return window.location.origin;
+    }
+
     async init() {
         this.showLoading();
+        
+        // Test API connection first
+        await this.testApiConnection();
+        
         await this.loadUserData();
         this.setupEventListeners();
         this.showSection('dashboard');
@@ -54,6 +68,25 @@ class AffiliateBossApp {
         return loader;
     }
 
+    async testApiConnection() {
+        try {
+            console.log('🔌 Testing API connection to:', this.baseUrl);
+            const response = await fetch(`${this.baseUrl}/api/health`);
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('✅ API connection successful:', result);
+                this.showNotification('Connected to API successfully!', 'success');
+            } else {
+                throw new Error('API health check failed');
+            }
+        } catch (error) {
+            console.error('❌ API connection failed:', error);
+            this.showNotification('API connection failed. Using demo mode.', 'warning');
+            // Continue with demo data
+        }
+    }
+
     async apiCall(endpoint, method = 'GET', data = null) {
         const options = {
             method: method,
@@ -68,17 +101,19 @@ class AffiliateBossApp {
         }
 
         try {
+            console.log(`📡 API ${method} ${endpoint}`);
             const response = await fetch(`${this.baseUrl}${endpoint}`, options);
             const result = await response.json();
             
             if (!response.ok) {
-                throw new Error(result.error || 'API call failed');
+                throw new Error(result.error || `HTTP ${response.status}: ${response.statusText}`);
             }
             
+            console.log(`✅ API ${method} ${endpoint} - Success`);
             return result;
         } catch (error) {
-            console.error('API Error:', error);
-            this.showNotification('API Error: ' + error.message, 'error');
+            console.error(`❌ API ${method} ${endpoint} - Error:`, error);
+            this.showNotification(`API Error (${endpoint}): ${error.message}`, 'error');
             throw error;
         }
     }

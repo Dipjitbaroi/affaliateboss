@@ -1,7 +1,7 @@
 {
   "name": "affiliate-boss",
   "version": "4.0.0",
-  "description": "Complete Affiliate Marketing Platform - Vite + Express Edition",
+  "description": "Complete Affiliate Marketing Platform - PostgreSQL + Prisma + Express Edition",
   "main": "server/api.js",
   "scripts": {
     "dev": "node start.js",
@@ -46,6 +46,8 @@
   },
   "keywords": [
     "affiliate-marketing",
+    "postgresql",
+    "prisma",
     "vite",
     "express",
     "nodejs",
