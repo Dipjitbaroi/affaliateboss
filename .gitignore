@@ -67,3 +67,9 @@ coverage/
 .yarn/
 !.yarn/releases
 .pnp.*
+
+# Ignore everything inside .next/
+.next/*
+
+# But don't ignore the .keep file
+!.next/.keep
