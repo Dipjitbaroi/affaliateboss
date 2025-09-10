@@ -13,23 +13,32 @@
     "start": "npm run dev",
     "test": "curl http://localhost:3000/api/health",
     "test-api": "curl http://localhost:3002/api/health",
-    "init-local": "node -e \"require('./lib/database').initDatabase()\""
+    "setup": "node scripts/setup-postgresql.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "node scripts/prisma-seed.js",
+    "db:reset": "prisma migrate reset",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^5.7.1",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^9.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "openai": "^4.20.1",
+    "pg": "^8.11.3",
     "twilio": "^4.19.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
+    "prisma": "^5.7.1",
     "vite": "^5.4.19"
   },
   "engines": {

@@ -1,0 +1,565 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ma/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  phone    String @unique
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  passwordHash String? @map("password_hash")
+  apiKey   String @unique @map("api_key")
+  
+  // Account status
+  status         UserStatus @default(ACTIVE)
+  tier           UserTier   @default(BRONZE)
+  emailVerified  Boolean    @default(false) @map("email_verified")
+  phoneVerified  Boolean    @default(false) @map("phone_verified")
+  
+  // Profile info
+  avatarUrl String? @map("avatar_url")
+  bio       String?
+  website   String?
+  timezone  String  @default("America/New_York")
+  language  String  @default("en")
+  currency  String  @default("USD")
+  
+  // Performance tracking
+  totalEarnings    Decimal @default(0.00) @map("total_earnings") @db.Decimal(15, 2)
+  totalClicks      Int     @default(0) @map("total_clicks")
+  totalConversions Int     @default(0) @map("total_conversions")
+  conversionRate   Decimal @default(0.00) @map("conversion_rate") @db.Decimal(5, 2)
+  
+  // Timestamps
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  lastLogin DateTime? @map("last_login")
+  
+  // Relations
+  affiliateLinks  AffiliateLink[]
+  shopifyStores   ShopifyStore[]
+  commissions     Commission[]
+  clickTracking   ClickTracking[]
+  paymentMethods  PaymentMethod[]
+  payouts         Payout[]
+  userSettings    UserSettings?
+  apiKeys         ApiKey[]
+  userSessions    UserSession[]
+  
+  @@map("users")
+}
+
+model AffiliateLink {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @map("user_id")
+  name        String
+  description String?
+  originalUrl String  @map("original_url")
+  shortCode   String  @unique @map("short_code")
+  shortUrl    String  @map("short_url")
+  
+  // Link settings
+  status   LinkStatus @default(ACTIVE)
+  category String     @default("general")
+  tags     String?    // JSON array as text
+  notes    String?
+  
+  // UTM parameters
+  utmSource   String? @map("utm_source")
+  utmMedium   String? @map("utm_medium")
+  utmCampaign String? @map("utm_campaign")
+  utmContent  String? @map("utm_content")
+  utmTerm     String? @map("utm_term")
+  
+  // Performance metrics
+  totalClicks      Int     @default(0) @map("total_clicks")
+  uniqueClicks     Int     @default(0) @map("unique_clicks")
+  totalConversions Int     @default(0) @map("total_conversions")
+  conversionRate   Decimal @default(0.00) @map("conversion_rate") @db.Decimal(5, 2)
+  totalEarnings    Decimal @default(0.00) @map("total_earnings") @db.Decimal(15, 2)
+  
+  // Advanced settings
+  geoTargeting          String? @map("geo_targeting")          // JSON as text
+  deviceTargeting       String? @map("device_targeting")       // JSON as text
+  scheduleSettings      String? @map("schedule_settings")      // JSON as text
+  clickFraudProtection  Boolean @default(true) @map("click_fraud_protection")
+  
+  // Timestamps
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  lastClickAt DateTime? @map("last_click_at")
+  
+  // Relations
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commissions   Commission[]
+  clickTracking ClickTracking[]
+  
+  @@map("affiliate_links")
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal @db.Decimal(15, 2)
+  imageUrl    String? @map("image_url")
+  category    String
+  vendor      String
+  sku         String? @unique
+  
+  // Commission settings
+  commissionRate Decimal       @map("commission_rate") @db.Decimal(5, 2)
+  commissionType CommissionType @default(PERCENTAGE) @map("commission_type")
+  
+  // Inventory
+  stockQuantity  Int     @default(0) @map("stock_quantity")
+  trackInventory Boolean @default(true) @map("track_inventory")
+  
+  // Product details
+  weight     String?
+  dimensions String?
+  tags       String? // JSON array as text
+  
+  // Shopify integration
+  shopifyProductId String? @map("shopify_product_id")
+  shopifyStoreId   Int?    @map("shopify_store_id")
+  
+  // Performance tracking
+  totalSales           Int     @default(0) @map("total_sales")
+  totalRevenue         Decimal @default(0.00) @map("total_revenue") @db.Decimal(15, 2)
+  totalCommissionsPaid Decimal @default(0.00) @map("total_commissions_paid") @db.Decimal(15, 2)
+  
+  // Status
+  status ProductStatus @default(ACTIVE)
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  commissions   Commission[]
+  shopifyStore  ShopifyStore? @relation(fields: [shopifyStoreId], references: [id])
+  
+  @@map("products")
+}
+
+model ShopifyStore {
+  id             Int    @id @default(autoincrement())
+  userId         Int    @map("user_id")
+  name           String
+  shopifyDomain  String @map("shopify_domain")
+  storeUrl       String @map("store_url")
+  
+  // Authentication
+  accessToken String @map("access_token")
+  
+  // Store details
+  ownerEmail  String? @map("owner_email")
+  phone       String?
+  countryCode String? @map("country_code")
+  currency    String  @default("USD")
+  timezone    String?
+  planName    String? @map("plan_name")
+  
+  // Sync settings
+  webhookEndpoint   String?   @map("webhook_endpoint")
+  webhookStatus     String    @default("pending") @map("webhook_status")
+  autoSyncEnabled   Boolean   @default(true) @map("auto_sync_enabled")
+  syncFrequency     String    @default("daily") @map("sync_frequency")
+  lastSync          DateTime? @map("last_sync")
+  nextSync          DateTime? @map("next_sync")
+  
+  // Performance
+  productsCount     Int     @default(0) @map("products_count")
+  ordersCount       Int     @default(0) @map("orders_count")
+  totalRevenue      Decimal @default(0.00) @map("total_revenue") @db.Decimal(15, 2)
+  commissionEarned  Decimal @default(0.00) @map("commission_earned") @db.Decimal(15, 2)
+  commissionDefault Decimal @default(15.0) @map("commission_default") @db.Decimal(5, 2)
+  
+  // Status
+  status           ShopifyStoreStatus @default(CONNECTED)
+  connectionStatus String             @default("healthy") @map("connection_status")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+  
+  @@map("shopify_stores")
+}
+
+model Commission {
+  id        Int @id @default(autoincrement())
+  userId    Int @map("user_id")
+  linkId    Int? @map("link_id")
+  productId Int? @map("product_id")
+  
+  // Commission details
+  commissionType   CommissionType @default(PRODUCT_SALE) @map("commission_type")
+  saleAmount       Decimal        @map("sale_amount") @db.Decimal(15, 2)
+  commissionRate   Decimal        @map("commission_rate") @db.Decimal(5, 2)
+  commissionAmount Decimal        @map("commission_amount") @db.Decimal(15, 2)
+  
+  // Tier calculation
+  baseCommissionRate Decimal? @map("base_commission_rate") @db.Decimal(5, 2)
+  tierMultiplier     Decimal  @default(1.00) @map("tier_multiplier") @db.Decimal(3, 2)
+  userTier           String?  @map("user_tier")
+  
+  // Order details
+  orderId         String? @map("order_id")
+  shopifyOrderId  String? @map("shopify_order_id")
+  customerEmail   String? @map("customer_email")
+  customerCountry String? @map("customer_country")
+  
+  // Tracking info
+  referrerSource String? @map("referrer_source")
+  deviceType     String? @map("device_type")
+  browser        String?
+  ipAddress      String? @map("ip_address")
+  
+  // Payment status
+  status        CommissionStatus @default(PENDING)
+  paymentStatus PaymentStatus    @default(PENDING) @map("payment_status")
+  payoutBatchId String?          @map("payout_batch_id")
+  
+  // Timestamps
+  saleDate      DateTime  @map("sale_date")
+  confirmedDate DateTime? @map("confirmed_date")
+  paidDate      DateTime? @map("paid_date")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  // Relations
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  link    AffiliateLink? @relation(fields: [linkId], references: [id], onDelete: SetNull)
+  product Product?       @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  @@map("commissions")
+}
+
+model ClickTracking {
+  id     Int @id @default(autoincrement())
+  linkId Int @map("link_id")
+  userId Int @map("user_id")
+  
+  // Click details
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+  referer   String?
+  
+  // Geographic info
+  country String?
+  city    String?
+  region  String?
+  
+  // Device info
+  deviceType String? @map("device_type")
+  browser    String?
+  os         String?
+  
+  // Conversion tracking
+  converted       Boolean  @default(false)
+  conversionValue Decimal? @map("conversion_value") @db.Decimal(15, 2)
+  orderId         String?  @map("order_id")
+  
+  // Timestamps
+  clickedAt   DateTime  @default(now()) @map("clicked_at")
+  convertedAt DateTime? @map("converted_at")
+  
+  // Relations
+  link AffiliateLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("click_tracking")
+}
+
+model PaymentMethod {
+  id       Int               @id @default(autoincrement())
+  userId   Int               @map("user_id")
+  type     PaymentMethodType
+  provider String
+  name     String
+  
+  // Payment details (encrypted in production)
+  details String // JSON as text
+  
+  // Status
+  isDefault          Boolean @default(false) @map("is_default")
+  status             String  @default("pending")
+  verificationStatus String  @default("pending") @map("verification_status")
+  
+  // Usage tracking
+  lastUsedAt DateTime? @map("last_used_at")
+  usageCount Int       @default(0) @map("usage_count")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payouts      Payout[]
+  defaultForUserSettings UserSettings[] @relation("DefaultPayoutMethod")
+  
+  @@map("payment_methods")
+}
+
+model Payout {
+  id              String        @id // e.g., 'po_2024013001'
+  userId          Int           @map("user_id")
+  paymentMethodId Int           @map("payment_method_id")
+  
+  // Payout details
+  amount    Decimal @db.Decimal(15, 2)
+  netAmount Decimal @map("net_amount") @db.Decimal(15, 2)
+  currency  String  @default("USD")
+  
+  // Fee breakdown
+  processingFee Decimal @default(0.00) @map("processing_fee") @db.Decimal(15, 2)
+  platformFee   Decimal @default(0.00) @map("platform_fee") @db.Decimal(15, 2)
+  totalFees     Decimal @map("total_fees") @db.Decimal(15, 2)
+  
+  // Status
+  status PayoutStatus @default(REQUESTED)
+  
+  // External tracking
+  externalId    String? @map("external_id")
+  failureReason String? @map("failure_reason")
+  
+  // Commission details
+  commissionCount       Int       @map("commission_count")
+  commissionPeriodStart DateTime? @map("commission_period_start") @db.Date
+  commissionPeriodEnd   DateTime? @map("commission_period_end") @db.Date
+  
+  // Timestamps
+  requestedDate DateTime  @default(now()) @map("requested_date")
+  processedDate DateTime? @map("processed_date")
+  completedDate DateTime? @map("completed_date")
+  
+  // Notes
+  notes String?
+  
+  // Relations
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+  
+  @@map("payouts")
+}
+
+model UserSettings {
+  id     Int @id @default(autoincrement())
+  userId Int @unique @map("user_id")
+  
+  // General settings
+  timezone   String @default("America/New_York")
+  language   String @default("en")
+  currency   String @default("USD")
+  dateFormat String @default("MM/DD/YYYY") @map("date_format")
+  timeFormat String @default("12_hour") @map("time_format")
+  
+  // Privacy settings
+  profileVisibility       String  @default("public") @map("profile_visibility")
+  showEarningsPublicly     Boolean @default(false) @map("show_earnings_publicly")
+  showStatisticsPublicly   Boolean @default(true) @map("show_statistics_publicly")
+  allowContactFromOthers   Boolean @default(true) @map("allow_contact_from_others")
+  marketingEmails          Boolean @default(true) @map("marketing_emails")
+  
+  // Affiliate preferences
+  defaultLinkCategory   String  @default("General") @map("default_link_category")
+  autoGenerateLinks     Boolean @default(true) @map("auto_generate_links")
+  linkCloakingEnabled   Boolean @default(true) @map("link_cloaking_enabled")
+  clickFraudProtection  Boolean @default(true) @map("click_fraud_protection")
+  
+  // Goals
+  monthlyEarningsGoal    Decimal @default(0.00) @map("monthly_earnings_goal") @db.Decimal(15, 2)
+  monthlyClicksGoal      Int     @default(0) @map("monthly_clicks_goal")
+  monthlyConversionsGoal Int     @default(0) @map("monthly_conversions_goal")
+  
+  // Payout settings
+  minimumPayout           Decimal @default(50.00) @map("minimum_payout") @db.Decimal(10, 2)
+  autoPayoutEnabled       Boolean @default(false) @map("auto_payout_enabled")
+  autoPayoutFrequency     String  @default("weekly") @map("auto_payout_frequency")
+  defaultPayoutMethodId   Int?    @map("default_payout_method_id")
+  
+  // Notification preferences
+  emailNotifications String? @map("email_notifications") // JSON as text
+  smsNotifications   String? @map("sms_notifications")   // JSON as text
+  
+  // Security settings
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+  twoFactorMethod  String  @default("sms") @map("two_factor_method")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user                   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  defaultPayoutMethod    PaymentMethod? @relation("DefaultPayoutMethod", fields: [defaultPayoutMethodId], references: [id], onDelete: SetNull)
+  
+  @@map("user_settings")
+}
+
+model ApiKey {
+  id         Int    @id @default(autoincrement())
+  userId     Int    @map("user_id")
+  name       String
+  keyHash    String @map("key_hash")    // Hashed version
+  keyPreview String @map("key_preview") // First few and last few characters
+  
+  // Permissions
+  permissions String // JSON array as text
+  
+  // Usage tracking
+  lastUsedAt DateTime? @map("last_used_at")
+  usageCount Int       @default(0) @map("usage_count")
+  
+  // Status and expiration
+  status    ApiKeyStatus @default(ACTIVE)
+  expiresAt DateTime?    @map("expires_at")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("api_keys")
+}
+
+model UserSession {
+  id       String @id
+  userId   Int    @map("user_id")
+  
+  // Session details
+  tokenHash  String  @map("token_hash")
+  deviceInfo String? @map("device_info")
+  ipAddress  String? @map("ip_address")
+  location   String?
+  
+  // Session status
+  isActive     Boolean  @default(true) @map("is_active")
+  lastActivity DateTime @default(now()) @map("last_activity")
+  expiresAt    DateTime @map("expires_at")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_sessions")
+}
+
+model OtpCode {
+  id      Int    @id @default(autoincrement())
+  phone   String
+  code    String
+  purpose String
+  
+  // Status
+  used        Boolean @default(false)
+  attempts    Int     @default(0)
+  maxAttempts Int     @default(3) @map("max_attempts")
+  
+  // Expiration
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("otp_codes")
+}
+
+// Enums
+enum UserStatus {
+  ACTIVE @map("active")
+  INACTIVE @map("inactive")
+  SUSPENDED @map("suspended")
+  PENDING @map("pending")
+}
+
+enum UserTier {
+  BRONZE @map("bronze")
+  SILVER @map("silver")
+  GOLD @map("gold")
+  PREMIUM @map("premium")
+  PLATINUM @map("platinum")
+  DIAMOND @map("diamond")
+}
+
+enum LinkStatus {
+  ACTIVE @map("active")
+  PAUSED @map("paused")
+  INACTIVE @map("inactive")
+}
+
+enum CommissionType {
+  PERCENTAGE @map("percentage")
+  FIXED @map("fixed")
+  PRODUCT_SALE @map("product_sale")
+  BONUS @map("bonus")
+  REFERRAL @map("referral")
+  TIER_BONUS @map("tier_bonus")
+}
+
+enum ProductStatus {
+  ACTIVE @map("active")
+  INACTIVE @map("inactive")
+  DISCONTINUED @map("discontinued")
+}
+
+enum ShopifyStoreStatus {
+  CONNECTED @map("connected")
+  CONNECTING @map("connecting")
+  ERROR @map("error")
+  DISCONNECTED @map("disconnected")
+}
+
+enum CommissionStatus {
+  PENDING @map("pending")
+  CONFIRMED @map("confirmed")
+  PAID @map("paid")
+  CANCELLED @map("cancelled")
+  REFUNDED @map("refunded")
+}
+
+enum PaymentStatus {
+  PENDING @map("pending")
+  PAID @map("paid")
+  FAILED @map("failed")
+}
+
+enum PaymentMethodType {
+  STRIPE @map("stripe")
+  PAYPAL @map("paypal")
+  WIRE @map("wire")
+  CHECK @map("check")
+}
+
+enum PayoutStatus {
+  REQUESTED @map("requested")
+  PROCESSING @map("processing")
+  COMPLETED @map("completed")
+  FAILED @map("failed")
+  CANCELLED @map("cancelled")
+}
+
+enum ApiKeyStatus {
+  ACTIVE @map("active")
+  INACTIVE @map("inactive")
+  REVOKED @map("revoked")
+}
