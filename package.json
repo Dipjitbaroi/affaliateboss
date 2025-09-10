@@ -1,26 +1,30 @@
 {
   "name": "affiliate-boss",
   "version": "4.0.0",
+  "private": true,
   "description": "Complete Affiliate Marketing Platform - PostgreSQL + Prisma + Express Edition",
-  "main": "server/api.js",
+  "workspaces": [
+    "packages/*"
+  ],
+  "main": "packages/backend/server/api.js",
   "scripts": {
-    "dev": "node start.js",
+    "dev": "concurrently \"npm --workspace=@affiliateboss/backend run dev\" \"npm --workspace=@affiliateboss/frontend run dev\"",
     "dev:manual": "echo \"Open 2 terminals: 'npm run api' and 'npm run frontend'\"",
-    "api": "cross-env API_PORT=3002 node server/api.js",
-    "frontend": "vite --port 3000 --host 0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview",
+    "api": "npm --workspace=@affiliateboss/backend run dev",
+    "frontend": "npm --workspace=@affiliateboss/frontend run dev",
+    "build": "npm --workspace=@affiliateboss/frontend run build",
+    "preview": "npm --workspace=@affiliateboss/frontend run preview",
     "start": "npm run dev",
     "test": "curl http://localhost:3000/api/health",
     "test-api": "curl http://localhost:3002/api/health",
     "setup": "node scripts/setup-postgresql.js",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "db:seed": "node scripts/prisma-seed.js",
-    "db:reset": "prisma migrate reset",
-    "postinstall": "prisma generate"
+    "db:generate": "npm --workspace=@affiliateboss/backend run db:generate",
+    "db:migrate": "npm --workspace=@affiliateboss/backend run db:migrate",
+    "db:deploy": "npm --workspace=@affiliateboss/backend run db:deploy",
+    "db:studio": "npm --workspace=@affiliateboss/backend run db:studio",
+    "db:seed": "npm --workspace=@affiliateboss/backend run db:seed",
+    "db:reset": "npm --workspace=@affiliateboss/backend run db:reset",
+    "postinstall": "npm --workspace=@affiliateboss/backend run db:generate"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
