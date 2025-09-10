@@ -69,7 +69,7 @@ coverage/
 .pnp.*
 
 # Ignore everything inside .next/
-.next/*
+.next/
 
 # But don't ignore the .keep file
 !.next/.keep
