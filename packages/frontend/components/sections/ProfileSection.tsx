@@ -196,6 +196,7 @@ export default function ProfileSection() {
         </div>
         <div className="flex space-x-2">
           <button
+            type="button"
             onClick={exportData}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
@@ -203,6 +204,7 @@ export default function ProfileSection() {
           </button>
           {!isEditing && (
             <button
+              type="button"
               onClick={() => setIsEditing(true)}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -235,7 +237,7 @@ export default function ProfileSection() {
       {/* Tab Navigation */}
       <div className="bg-white rounded-lg shadow mb-6">
         <div className="border-b border-gray-200">
-          <nav className="flex">
+          <nav className="flex" role="tablist" aria-label="Profile sections">
             {[
               { id: 'profile', label: 'Profile Info', icon: 'fas fa-user' },
               { id: 'payment', label: 'Payment Settings', icon: 'fas fa-credit-card' },
@@ -244,6 +246,8 @@ export default function ProfileSection() {
             ].map((tab) => (
               <button
                 key={tab.id}
+                type="button"
+                role="tab"
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center px-6 py-3 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
@@ -273,9 +277,11 @@ export default function ProfileSection() {
                   />
                   {isEditing && (
                     <button
+                      type="button"
                       onClick={() => {/* Handle avatar upload */}}
                       className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700"
                       title="Change avatar"
+                      aria-label="Change avatar"
                     >
                       <i className="fas fa-camera text-xs"></i>
                     </button>
@@ -288,6 +294,8 @@ export default function ProfileSection() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                         <input
                           type="text"
+                          title="Full Name"
+                          placeholder="Full Name"
                           value={editData.name}
                           onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -296,6 +304,7 @@ export default function ProfileSection() {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                         <textarea
+                          title="Bio"
                           value={editData.bio}
                           onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))}
                           rows={3}
@@ -308,6 +317,7 @@ export default function ProfileSection() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
                           <input
                             type="url"
+                            title="Website"
                             value={editData.website}
                             onChange={(e) => setEditData(prev => ({ ...prev, website: e.target.value }))}
                             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -318,6 +328,8 @@ export default function ProfileSection() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                           <input
                             type="text"
+                            title="Location"
+                            placeholder="City, Country"
                             value={editData.location}
                             onChange={(e) => setEditData(prev => ({ ...prev, location: e.target.value }))}
                             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -429,6 +441,7 @@ export default function ProfileSection() {
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
+                        title={`${notification.label} notification setting`}
                         checked={isEditing ? editData.notifications[notification.key as keyof typeof editData.notifications] : profile.notifications[notification.key as keyof typeof profile.notifications]}
                         onChange={(e) => setEditData(prev => ({
                           ...prev,
@@ -480,6 +493,7 @@ export default function ProfileSection() {
                     />
                   </div>
                   <button
+                    type="button"
                     onClick={() => {/* Handle password change */}}
                     className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
@@ -496,6 +510,7 @@ export default function ProfileSection() {
                     Once you delete your account, there is no going back. Please be certain.
                   </p>
                   <button
+                    type="button"
                     onClick={deleteAccount}
                     className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                   >
@@ -512,6 +527,7 @@ export default function ProfileSection() {
       {isEditing && (
         <div className="flex justify-end space-x-3">
           <button
+            type="button"
             onClick={() => {
               setIsEditing(false)
               setEditData({
@@ -530,6 +546,7 @@ export default function ProfileSection() {
             Cancel
           </button>
           <button
+            type="button"
             onClick={updateProfile}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
